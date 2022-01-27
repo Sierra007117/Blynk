@@ -2,6 +2,19 @@
 #include <ESP8266WiFi.h>        
 #include <BlynkSimpleEsp8266.h>
 #include <AceButton.h>
+#include <LedControl.h>
+#include <WiFiUdp.h>
+#include <NTPClient.h>
+#include <TimeLib.h>
+
+LedControl lc = LedControl(D4, D2, D3, 1); //DIN,CLK,CS,display
+
+byte last_second, second_, minute_, hour_, day_;
+int Digit7, Digit6, Digit5, Digit4, Digit3, Digit2, Digit1, Digit0;
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", (6*60*60), 60000);
+
 using namespace ace_button;
 
 bool fetch_blynk_state = true;
@@ -11,10 +24,10 @@ bool fetch_blynk_state = true;
 #define RelayPin3 D7
 #define RelayPin4 D8
 
-#define SwitchPin1 D1
-#define SwitchPin2 D2 
-#define SwitchPin3 D3
-#define SwitchPin4 D4
+#define SwitchPin1 10
+#define SwitchPin2 1
+#define SwitchPin3 3
+#define SwitchPin4 D1
 
 #define wifiLed D0
 
@@ -103,6 +116,10 @@ void setup()
 {
   Serial.begin(115200);
 
+  lc.shutdown(0,false);
+  lc.setIntensity(0,15);
+  lc.clearDisplay(0);
+
   pinMode(RelayPin1, OUTPUT);
   pinMode(RelayPin2, OUTPUT);
   pinMode(RelayPin3, OUTPUT);
@@ -149,6 +166,43 @@ void loop()
 {  
   Blynk.run();
   timer.run(); 
+
+
+  timeClient.update();
+  unsigned long unix_epoch = timeClient.getEpochTime();
+    second_ = second(unix_epoch);
+  if (last_second != second_) {
+
+
+    minute_ = minute(unix_epoch);
+    hour_   = hour(unix_epoch);
+    day_    = day(unix_epoch);
+
+    Digit0 = second_ % 10;
+    Digit1 = second_ / 10;
+    Digit2  = minute_ % 10;
+    Digit3  = minute_ / 10;
+    Digit4  = hour_   % 10;
+    Digit5  = hour_   / 10;
+    Digit6  = day_   %  10;
+    Digit7  = day_   /10;
+    
+  Serial.println(day_);
+  Serial.println(hour_);
+  Serial.println(minute_);
+  Serial.println(second_);
+  
+  last_second = second_;
+
+  lc.setDigit(0,7,(byte)Digit7,false);
+  lc.setDigit(0,6,(byte)Digit6,true);
+  lc.setDigit(0,5,(byte)Digit5,false);
+  lc.setDigit(0,4,(byte)Digit4,true);
+  lc.setDigit(0,3,(byte)Digit3,false);
+  lc.setDigit(0,2,(byte)Digit2,true);
+  lc.setDigit(0,1,(byte)Digit1,false);
+  lc.setDigit(0,0,(byte)Digit0,false);  
+  }
 
   button1.check();
   button2.check();
