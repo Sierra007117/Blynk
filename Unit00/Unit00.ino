@@ -8,11 +8,11 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", (6*60*60), 60000);
+NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", (6 * 60 * 60), 60000); // GMT+6 you ducking moron
 
-String weekDays[7]={" Sunday   ", " Monday   ", " Tuesday  ", " Wednesday", " Thursday ", " Friday   ", " Saturday "}; //Its not stupid if it works~
+String weekDays[7] = {" Sunday   ", " Monday   ", " Tuesday  ", " Wednesday", " Thursday ", " Friday   ", " Saturday "}; // Its not stupid if it works~
 
-bool fetch_blynk_state = true;  
+bool fetch_blynk_state = true;
 
 #define RelayPin1 D5
 #define RelayPin2 D6
@@ -24,12 +24,12 @@ bool fetch_blynk_state = true;
 #define SwitchPin3 D3
 #define SwitchPin4 D4
 
-#define wifiLed   D0
+#define wifiLed D0
 
-#define VPIN_BUTTON_1    V0
-#define VPIN_BUTTON_2    V1
-#define VPIN_BUTTON_3    V2 
-#define VPIN_BUTTON_4    V3
+#define VPIN_BUTTON_1 V0
+#define VPIN_BUTTON_2 V1
+#define VPIN_BUTTON_3 V2
+#define VPIN_BUTTON_4 V3
 
 bool toggleState_1 = LOW;
 bool toggleState_2 = LOW;
@@ -47,56 +47,66 @@ char auth[] = BLYNK_AUTH_TOKEN;
 
 BlynkTimer timer;
 
-BLYNK_WRITE(VPIN_BUTTON_1) {
+BLYNK_WRITE(VPIN_BUTTON_1)
+{
   toggleState_1 = param.asInt();
   digitalWrite(RelayPin1, !toggleState_1);
 }
 
-BLYNK_WRITE(VPIN_BUTTON_2) {
+BLYNK_WRITE(VPIN_BUTTON_2)
+{
   toggleState_2 = param.asInt();
   digitalWrite(RelayPin2, !toggleState_2);
 }
 
-BLYNK_WRITE(VPIN_BUTTON_3) {
+BLYNK_WRITE(VPIN_BUTTON_3)
+{
   toggleState_3 = param.asInt();
   digitalWrite(RelayPin3, !toggleState_3);
 }
 
-BLYNK_WRITE(VPIN_BUTTON_4) {
+BLYNK_WRITE(VPIN_BUTTON_4)
+{
   toggleState_4 = param.asInt();
   digitalWrite(RelayPin4, !toggleState_4);
 }
 
-void checkBlynkStatus() { 
+void checkBlynkStatus()
+{
 
   bool isconnected = Blynk.connected();
-  if (isconnected == false) {
+  if (isconnected == false)
+  {
     wifiFlag = 1;
     Serial.println("Blynk Not Connected");
     digitalWrite(wifiLed, HIGH);
     lcd.setCursor(0, 0);
-    lcd.print("Connection Error");   
+    lcd.print("Connection Error");
     lcd.setCursor(0, 1);
-    lcd.print("Status : Offline");   
+    lcd.print("Status : Offline");
   }
-  if (isconnected == true) {
+  if (isconnected == true)
+  {
     wifiFlag = 0;
-    if (!fetch_blynk_state){
-    Blynk.virtualWrite(VPIN_BUTTON_1, toggleState_1);
-    Blynk.virtualWrite(VPIN_BUTTON_2, toggleState_2);
-    Blynk.virtualWrite(VPIN_BUTTON_3, toggleState_3);
-    Blynk.virtualWrite(VPIN_BUTTON_4, toggleState_4);
+    if (!fetch_blynk_state)
+    {
+      Blynk.virtualWrite(VPIN_BUTTON_1, toggleState_1);
+      Blynk.virtualWrite(VPIN_BUTTON_2, toggleState_2);
+      Blynk.virtualWrite(VPIN_BUTTON_3, toggleState_3);
+      Blynk.virtualWrite(VPIN_BUTTON_4, toggleState_4);
     }
     digitalWrite(wifiLed, LOW);
-    Serial.println("Blynk Connected");   
+    Serial.println("Blynk Connected");
     lcd.setCursor(0, 1);
-    lcd.print("Status : Online ");   
+    lcd.print("Status : Online ");
   }
 }
 
-BLYNK_CONNECTED() {
+BLYNK_CONNECTED()
+{
 
-  if (fetch_blynk_state){
+  if (fetch_blynk_state)
+  {
     Blynk.syncVirtual(VPIN_BUTTON_1);
     Blynk.syncVirtual(VPIN_BUTTON_2);
     Blynk.syncVirtual(VPIN_BUTTON_3);
@@ -106,63 +116,71 @@ BLYNK_CONNECTED() {
 
 void manual_control()
 {
-  if (digitalRead(SwitchPin1) == LOW && SwitchState_1 == LOW) {
+  if (digitalRead(SwitchPin1) == LOW && SwitchState_1 == LOW)
+  {
     digitalWrite(RelayPin1, LOW);
     toggleState_1 = 1;
     SwitchState_1 = HIGH;
     Blynk.virtualWrite(VPIN_BUTTON_1, toggleState_1);
     Serial.println("Switch-1 on");
   }
-  if (digitalRead(SwitchPin1) == HIGH && SwitchState_1 == HIGH) {
+  if (digitalRead(SwitchPin1) == HIGH && SwitchState_1 == HIGH)
+  {
     digitalWrite(RelayPin1, HIGH);
     toggleState_1 = 0;
     SwitchState_1 = LOW;
     Blynk.virtualWrite(VPIN_BUTTON_1, toggleState_1);
     Serial.println("Switch-1 off");
   }
-  if (digitalRead(SwitchPin2) == LOW && SwitchState_2 == LOW) {
+  if (digitalRead(SwitchPin2) == LOW && SwitchState_2 == LOW)
+  {
     digitalWrite(RelayPin2, LOW);
     toggleState_2 = 1;
     SwitchState_2 = HIGH;
     Blynk.virtualWrite(VPIN_BUTTON_2, toggleState_2);
     Serial.println("Switch-2 on");
   }
-  if (digitalRead(SwitchPin2) == HIGH && SwitchState_2 == HIGH) {
+  if (digitalRead(SwitchPin2) == HIGH && SwitchState_2 == HIGH)
+  {
     digitalWrite(RelayPin2, HIGH);
     toggleState_2 = 0;
     SwitchState_2 = LOW;
     Blynk.virtualWrite(VPIN_BUTTON_2, toggleState_2);
     Serial.println("Switch-2 off");
   }
-  if (digitalRead(SwitchPin3) == LOW && SwitchState_3 == LOW) {
+  if (digitalRead(SwitchPin3) == LOW && SwitchState_3 == LOW)
+  {
     digitalWrite(RelayPin3, LOW);
     toggleState_3 = 1;
     SwitchState_3 = HIGH;
     Blynk.virtualWrite(VPIN_BUTTON_3, toggleState_3);
     Serial.println("Switch-3 on");
   }
-  if (digitalRead(SwitchPin3) == HIGH && SwitchState_3 == HIGH) {
+  if (digitalRead(SwitchPin3) == HIGH && SwitchState_3 == HIGH)
+  {
     digitalWrite(RelayPin3, HIGH);
     toggleState_3 = 0;
     SwitchState_3 = LOW;
     Blynk.virtualWrite(VPIN_BUTTON_3, toggleState_3);
     Serial.println("Switch-3 off");
   }
-  if (digitalRead(SwitchPin4) == LOW && SwitchState_4 == LOW) {
+  if (digitalRead(SwitchPin4) == LOW && SwitchState_4 == LOW)
+  {
     digitalWrite(RelayPin4, LOW);
     toggleState_4 = 1;
     SwitchState_4 = HIGH;
     Blynk.virtualWrite(VPIN_BUTTON_4, toggleState_4);
     Serial.println("Switch-4 on");
   }
-  if (digitalRead(SwitchPin4) == HIGH && SwitchState_4 == HIGH) {
+  if (digitalRead(SwitchPin4) == HIGH && SwitchState_4 == HIGH)
+  {
     digitalWrite(RelayPin4, HIGH);
     toggleState_4 = 0;
     SwitchState_4 = LOW;
     Blynk.virtualWrite(VPIN_BUTTON_4, toggleState_4);
     Serial.println("Switch-4 off");
   }
-}  
+}
 
 void setup()
 {
@@ -194,8 +212,9 @@ void setup()
   timer.setInterval(2000L, checkBlynkStatus);
   Blynk.config(auth);
   delay(1000);
-  
-  if (!fetch_blynk_state){
+
+  if (!fetch_blynk_state)
+  {
     Blynk.virtualWrite(VPIN_BUTTON_1, toggleState_1);
     Blynk.virtualWrite(VPIN_BUTTON_2, toggleState_2);
     Blynk.virtualWrite(VPIN_BUTTON_3, toggleState_3);
@@ -204,13 +223,13 @@ void setup()
 }
 
 void loop()
-{    
+{
   manual_control();
   Blynk.run();
   timer.run();
   timeClient.update();
   lcd.setCursor(0, 0);
-  lcd.print(timeClient.getFormattedTime());  
+  lcd.print(timeClient.getFormattedTime());
   String weekDay = weekDays[timeClient.getDay()];
   lcd.setCursor(8, 0);
   lcd.print(weekDay);
