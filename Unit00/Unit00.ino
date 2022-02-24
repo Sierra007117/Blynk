@@ -12,6 +12,7 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", (6 * 60 * 60), 60000); // GMT+6 you ducking moron
 
 String weekDays[7] = {" Sunday   ", " Monday   ", " Tuesday  ", " Wednesday", " Thursday ", " Friday   ", " Saturday "}; // Its not stupid if it works~
+// Mein Gott, das ist dumm
 
 using namespace ace_button;
 bool fetch_blynk_state = true;
@@ -26,8 +27,10 @@ bool fetch_blynk_state = true;
 #define SwitchPin3 D3
 #define SwitchPin4 10
 
-#define wifiLed D0
-
+#define uplinkLED D0
+// uplink status indicator LED
+#define opsLED D4
+// operations status indicator LED
 #define VPIN_BUTTON_1 V0
 #define VPIN_BUTTON_2 V1
 #define VPIN_BUTTON_3 V2
@@ -90,7 +93,7 @@ void checkBlynkStatus()
   {
     wifiFlag = 1;
     Serial.println("Blynk Not Connected");
-    digitalWrite(wifiLed, HIGH);
+    digitalWrite(uplinkLED, HIGH);
   }
   if (isconnected == true)
   {
@@ -102,7 +105,7 @@ void checkBlynkStatus()
       Blynk.virtualWrite(VPIN_BUTTON_3, toggleState_3);
       Blynk.virtualWrite(VPIN_BUTTON_4, toggleState_4);
     }
-    digitalWrite(wifiLed, LOW);
+    digitalWrite(uplinkLED, LOW);
     Serial.println("Blynk Connected");
   }
 }
@@ -125,12 +128,15 @@ void setup()
   lcd.init();
   lcd.backlight();
   lcd.clear();
+
+  pinMode(opsLED, OUTPUT);
+
   pinMode(RelayPin1, OUTPUT);
   pinMode(RelayPin2, OUTPUT);
   pinMode(RelayPin3, OUTPUT);
   pinMode(RelayPin4, OUTPUT);
 
-  pinMode(wifiLed, OUTPUT);
+  pinMode(uplinkLED, OUTPUT);
 
   pinMode(SwitchPin1, INPUT_PULLUP);
   pinMode(SwitchPin2, INPUT_PULLUP);
@@ -142,7 +148,7 @@ void setup()
   digitalWrite(RelayPin3, !toggleState_3);
   digitalWrite(RelayPin4, !toggleState_4);
 
-  digitalWrite(wifiLed, HIGH);
+  digitalWrite(uplinkLED, HIGH);
 
   config1.setEventHandler(button1Handler);
   config2.setEventHandler(button2Handler);
@@ -170,6 +176,8 @@ void setup()
 
 void loop()
 {
+  digitalWrite(opsLED, HIGH);
+
   Blynk.run();
   timer.run();
 
@@ -184,6 +192,8 @@ void loop()
   button2.check();
   button3.check();
   button4.check();
+
+  digitalWrite(opsLED, LOW);
 }
 
 void button1Handler(AceButton *button, uint8_t eventType, uint8_t buttonState)
