@@ -94,6 +94,8 @@ void checkBlynkStatus()
     wifiFlag = 1;
     Serial.println("Blynk Not Connected");
     digitalWrite(uplinkLED, HIGH);
+    lcd.setCursor(0, 1);
+    lcd.print("Status : Offline");  
   }
   if (isconnected == true)
   {
@@ -107,6 +109,9 @@ void checkBlynkStatus()
     }
     digitalWrite(uplinkLED, LOW);
     Serial.println("Blynk Connected");
+    lcd.setCursor(0, 1);
+    lcd.print("Status : Online ");    
+    // If it works,please don't touch it~
   }
 }
 
