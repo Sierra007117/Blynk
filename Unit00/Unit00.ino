@@ -11,7 +11,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", (6 * 60 * 60), 60000); // GMT+6 you ducking moron
 
-String weekDays[7] = {" Sunday   ", " Monday   ", " Tuesday  ", " Wednesday", " Thursday ", " Friday   ", " Saturday "}; // Its not stupid if it works~
+String weekDays[7] = {" Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; // Its not stupid if it works~
 // Mein Gott, das ist dumm
 
 using namespace ace_button;
@@ -190,7 +190,7 @@ void loop()
   lcd.setCursor(0, 0);
   lcd.print(timeClient.getFormattedTime());
   String weekDay = weekDays[timeClient.getDay()];
-  lcd.setCursor(8, 0);
+  lcd.setCursor(9, 0);
   lcd.print(weekDay);
 
   button1.check();
