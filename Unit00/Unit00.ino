@@ -110,7 +110,8 @@ void checkBlynkStatus()
     digitalWrite(uplinkLED, LOW);
     Serial.println("Blynk Connected");
     lcd.setCursor(0, 1);
-    lcd.print("Status : Online ");    
+    lcd.print("Status : Online ");
+    timeClient.update();
     // If it works,please don't touch it~
   }
 }
@@ -186,7 +187,6 @@ void loop()
   Blynk.run();
   timer.run();
 
-  timeClient.update();
   lcd.setCursor(0, 0);
   lcd.print(timeClient.getFormattedTime());
   String weekDay = weekDays[timeClient.getDay()];
