@@ -11,7 +11,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", (6 * 60 * 60), 60000); // GMT+6 you ducking moron
 
-String weekDays[7] = {" Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; // Its not stupid if it works~
+String weekDays[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; // Its not stupid if it works~
 // Mein Gott, das ist dumm
 
 using namespace ace_button;
@@ -22,8 +22,8 @@ bool fetch_blynk_state = true;
 #define RelayPin3 D7
 #define RelayPin4 D8
 
-#define SwitchPin1 3
-#define SwitchPin2 1
+#define SwitchPin1 1
+#define SwitchPin2 3
 #define SwitchPin3 D3
 #define SwitchPin4 10
 
