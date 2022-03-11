@@ -107,6 +107,8 @@ void checkBlynkStatus()
     }
     digitalWrite(wifiLed, LOW);
     Serial.println("Blynk Connected");
+    timeClient.update();
+
   }
 }
 
@@ -178,7 +180,6 @@ void loop()
   Blynk.run();
   timer.run();
 
-  timeClient.update();
   unsigned long unix_epoch = timeClient.getEpochTime();
   second_ = second(unix_epoch);
   if (last_second != second_)
