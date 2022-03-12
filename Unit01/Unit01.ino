@@ -108,7 +108,6 @@ void checkBlynkStatus()
     digitalWrite(wifiLed, LOW);
     Serial.println("Blynk Connected");
     timeClient.update();
-
   }
 }
 
