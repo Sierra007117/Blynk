@@ -1,18 +1,29 @@
 #include "cred.h" //Don't be a tosser
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
-#include <LiquidCrystal_I2C.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 #include <AceButton.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 32
+#define OLED_RESET     -1
+#define SCREEN_ADDRESS 0x3C
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+#define NTPServer "asia.pool.ntp.org"
+#define TimeZone 6 //GMT +6
+#define UpdateInterval 60000 //in milisec
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", (6 * 60 * 60), 60000); // GMT+6 you ducking moron
+NTPClient timeClient(ntpUDP, NTPServer, (TimeZone * 60 * 60), UpdateInterval);
 
-String weekDays[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; // Its not stupid if it works~
-// Mein Gott, das ist dumm
+String weekDays[7] = {"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
 
 using namespace ace_button;
 bool fetch_blynk_state = true;
@@ -93,9 +104,7 @@ void checkBlynkStatus()
   {
     wifiFlag = 1;
     Serial.println("Blynk Not Connected");
-    digitalWrite(uplinkLED, HIGH);
-    lcd.setCursor(0, 1);
-    lcd.print("Status : Offline");  
+    digitalWrite(uplinkLED, HIGH); 
   }
   if (isconnected == true)
   {
@@ -109,8 +118,6 @@ void checkBlynkStatus()
     }
     digitalWrite(uplinkLED, LOW);
     Serial.println("Blynk Connected");
-    lcd.setCursor(0, 1);
-    lcd.print("Status : Online ");
     timeClient.update();
     // If it works,please don't touch it~
   }
@@ -131,9 +138,11 @@ BLYNK_CONNECTED()
 void setup()
 {
   Serial.begin(115200);
-  lcd.init();
-  lcd.backlight();
-  lcd.clear();
+  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+  }
+  display.clearDisplay();  
 
   pinMode(opsLED, OUTPUT);
 
@@ -187,11 +196,16 @@ void loop()
   Blynk.run();
   timer.run();
 
-  lcd.setCursor(0, 0);
-  lcd.print(timeClient.getFormattedTime());
   String weekDay = weekDays[timeClient.getDay()];
-  lcd.setCursor(9, 0);
-  lcd.print(weekDay);
+
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println(timeClient.getFormattedTime());
+  display.setCursor(0,18);
+  display.println(weekDay);
+  display.display(); 
 
   button1.check();
   button2.check();
