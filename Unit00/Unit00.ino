@@ -10,7 +10,7 @@
 #include <Adafruit_SSD1306.h>
 
 #define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 32
+#define SCREEN_HEIGHT 64
 #define OLED_RESET -1
 #define SCREEN_ADDRESS 0x3C
 
@@ -239,10 +239,15 @@ void loop()
   display.clearDisplay();
   display.setTextSize(2);
   display.setTextColor(WHITE);
-  display.setCursor(0, 0);
+  display.setCursor(0, 1);
   display.println(timeClient.getFormattedTime());
-  display.setCursor(0, 18);
+  display.setCursor(0, 17);
   display.println(weekDay);
+  display.setCursor(0, 33);
+   display.setTextSize(1);
+  display.println(WiFi.localIP());
+  display.setCursor(0, 49);
+  display.println();    
   display.display();
 
   button1.check();
