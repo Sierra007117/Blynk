@@ -236,9 +236,10 @@ void loop()
 
   String weekDay = weekDays[timeClient.getDay()];
   /*
-  Size 2 Config ( 1002 ) : 14 ( Line 1 from 0 to 14 ) + 4 ( Line Spacing from 15 to 17 ) + 14 ( Line 2 from 18 to 32 ) = 32
+  Size 1 Config ( 2104 ) : 0,8,16,24
+  Size 2 Config ( 1002 ) : 0,18
   */
-  
+
   display.clearDisplay();
   display.setTextSize(2);
   display.setTextColor(WHITE);
