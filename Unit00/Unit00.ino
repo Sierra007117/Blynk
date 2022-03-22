@@ -84,7 +84,6 @@ void checkBlynkStatus()
     Serial.println("Blynk Not Connected");
     digitalWrite(uplinkLED, HIGH);
     digitalWrite(opsLED, LOW);
-
   }
   if (isconnected == true)
   {
