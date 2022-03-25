@@ -76,10 +76,10 @@ bool fetch_blynk_state = true;
 // uplink status indicator LED
 #define opsLED D4
 // operations status indicator LED
-#define VPIN_BUTTON_1 V0
-#define VPIN_BUTTON_2 V1
-#define VPIN_BUTTON_3 V2
-#define VPIN_BUTTON_4 V3
+#define VPIN_BUTTON_1 V5
+#define VPIN_BUTTON_2 V6
+#define VPIN_BUTTON_3 V7
+#define VPIN_BUTTON_4 V8
 
 bool toggleState_1 = LOW;
 bool toggleState_2 = LOW;
